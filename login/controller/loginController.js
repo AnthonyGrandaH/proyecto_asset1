@@ -29,14 +29,13 @@ const login = async (req, res) => {
         const {email, password} = req.body;
         const user = await 
         //pool.none("SELECT * FROM users WHERE user_email = $1", [email])
-        Usuarios.findone([email])
-        console.log(email)
-        console.log("contrasena "+password)
-        console.log("contrasena 2" +pool.query("SELECT * FROM users WHERE user_password = $2", [password]))
-        const checkpassword = await compare(password, pool.one("SELECT * FROM users WHERE user_password = $2", [password]))
+        Usuarios.findone([email])       
         
-        
-        if (!checkPassword) {
+        if (!user) {
+            res.status(404)
+            res.send({ error: 'User not found' })
+        } else
+        if (password === pool.one("SELECT * FROM users WHERE user_password = $2", [password])) {
             res.status(409)
             res.send({
                 error: 'Invalid password'
